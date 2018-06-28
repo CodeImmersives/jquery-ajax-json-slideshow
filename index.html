@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html lang="en-us">
+
+<head>
+    
+  <meta charset="utf-8">
+
+  <title>Dynamic Slideshow</title>
+
+  <link rel="stylesheet" href="css/DG_Slider2.css">
+    
+</head>
+
+<body>
+    
+    <div style="margin:0 auto; text-align: center"> 
+        
+        <div class="demo-wrap">
+            <ul id="slider1"></ul>
+        </div> 
+
+        <div>
+            <select name="gallery" id="gallery" 
+                    style="font-size:1.25rem; padding:10px 80px; margin:10px" onchange="loadGallery()">
+                <option value="caddy">English Tea Caddy</option>
+                <option value="chair">American Hepplewhite Chair</option>
+                <option value="bicorn">American Bicorn Hat</option>
+                <option value="blunderbuss">Italian Blunderbuss</option>
+                <option value="cabinet">French Cabinet</option>
+            </select>
+        </div>
+        
+    </div>
+  
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="Scripts/jquery.DG_Slider.min.js"></script>
+
+    <script>
+
+        var imgNames = [] // imgNames = JSON.parse(xhr.responseText)
+        // imgNames[0].imgName == 'cabinet1.jpg'
+        var gallery = '' // string to hold the value of menu
+        // var isFirstGallery = true
+        var myUL = document.getElementById("slider1")  // widget ul
+        var demoWrap = document.querySelector(".demo-wrap") // widget div
+
+        function loadGallery() {
+
+            demoWrap.innerHTML = '<ul id="slider1"></ul>' // refresh 
+            myUL = document.getElementById("slider1") // refresh widget
+            
+            // get gallery choice (pg load default is 'caddy')
+            gallery = document.getElementById('gallery').value
+
+//   PREFER VANILLA AJAX over 'Dollar AJAX' (jQuery)? Use this insted of $.get() below
+            // var xhr = new XMLHttpRequest() // make an AJAX loader obj
+//            xhr.onreadystatechange = function() {
+//
+//                 if(xhr.status == 200 && xhr.readyState == 4) {
+//                     // if we made it this far we have our data
+//                     // alert(xhr.responseText) // test if JSON got loaded
+//                     imgNames = JSON.parse(xhr.responseText)
+//                     // alert(imgNames[0].imgName) // test if JSON got parsed
+//                     // concat and output the li tags of the slideshow
+//                     renderListItems(gallery) // gallery = img folder name
+//                 } // end if
+//
+//            } // end onreadystate...
+//
+//            xhr.open('GET', `Scripts/${gallery}.json`, true)
+//            xhr.send()
+            
+            // "Dollar AJAX" (jquery version of vanilla AJAX)
+            $.get(`Scripts/${gallery}.json`, data => {
+                imgNames = data                 
+                renderListItems(gallery) // gallery = img folder name
+            })
+            
+        } // function loadGallery()
+
+        function renderListItems(gallery) {
+
+            // make the li tags for the jquery slideshow and output them
+            for(let i = 0; i < imgNames.length; i++) {
+
+                myUL.innerHTML += `<li><div class="left">
+            <img src="images/${gallery}/${imgNames[i].imgName}">
+                    </div><div class="right">
+                      <div class="album"></div>
+                      <div class="band"></div>
+                    </div></li>`
+
+            } // for loop 
+
+            initWidget()
+
+        } // function renderListItems(gallery)
+
+        function initWidget() {
+
+            $('#slider1').DG_Slider({
+                  auto: true, // does slideshow autoplay or not
+                  pager: true, // do we have next / prev btns
+                  speed: 1000, // how fast each image transitions
+                  pause: 5000, // how long each image stays before autoplay to next
+                  autoDelay: 5000
+             });
+
+        } // function initWidget() 
+
+        loadGallery()
+
+    </script>
+
+  </body>
+    
+</html>
